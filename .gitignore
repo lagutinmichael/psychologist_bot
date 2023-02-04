@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 json_ekaterina.json
+config.py

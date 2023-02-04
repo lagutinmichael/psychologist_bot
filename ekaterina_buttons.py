@@ -60,7 +60,7 @@ def category():
 ## ADMIN BUTTONS
 
 # ADMIN кнопки на главной странице
-def main():
+def admin_main():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
     button_1 = types.KeyboardButton('Запросы')
@@ -75,7 +75,7 @@ def main():
     return kb
 
 # ADMIN работа с пользователем (не помню функционал)
-def send_message():
+def admin_send_message():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1, one_time_keyboard=True)
 
     button_1 = types.KeyboardButton('Отправить сообщение')
@@ -86,7 +86,7 @@ def send_message():
     return kb
 
 # ADMIN кнопки работы с вопросами
-def get_question():
+def admin_get_question():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
 
     button_1 = types.KeyboardButton('Получить вопрос по ID')
@@ -99,7 +99,7 @@ def get_question():
     return kb
 
 # ADMIN кнопки работы со статистикой
-def get_statistics():
+def admin_get_statistics():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
 
     button_1 = types.KeyboardButton('Колличество заявок')
@@ -111,7 +111,7 @@ def get_statistics():
     return kb
 
 # ADMIN кнопки по выгрузке информации из базы
-def get_info():
+def admin_get_info():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
 
     button_1 = types.KeyboardButton('Получить запрос по ID')
