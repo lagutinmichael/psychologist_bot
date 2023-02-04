@@ -30,6 +30,9 @@ def admin_check_command(message):
     command_list = ['Запросы', 'Вопросы', 'Статистика', 'Рассылка']
     if command in command_list:
         if command == 'Запросы':
+            bot.send_message(message.from_user.id, 'Выберите действие с Запросами', reply_markup=ekaterina_buttons.admin_get_requests())
+            bot.register_next_step_handler(message, admin_requests_menu)
+        elif command == 'Вопросы':
             pass
     else:
         bot.send_message(message.from_user.id, 'Команда не распознана, попробуйте другую', reply_markup=ekaterina_buttons.admin_main())

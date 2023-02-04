@@ -111,7 +111,7 @@ def admin_get_statistics():
     return kb
 
 # ADMIN кнопки по выгрузке информации из базы
-def admin_get_info():
+def admin_get_requests():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
 
     button_1 = types.KeyboardButton('Получить запрос по ID')
