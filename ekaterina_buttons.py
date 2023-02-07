@@ -127,3 +127,24 @@ def admin_get_requests():
     return kb
 
 
+# ADMIN кнопки для выбора запроса по id
+def admin_get_quantity_requests():
+    data = ekaterina_data.get_quantity_requests()
+
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=5)
+    
+    for i in data:
+        kb.add(types.KeyboardButton(i))
+
+    return kb
+
+# ADMIN кнопки для выбора вопроса по id
+def admin_get_quantity_questions():
+    data = ekaterina_data.get_quantity_questions()
+
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=5)
+    
+    for i in data:
+        kb.add(types.KeyboardButton(i))
+
+    return kb

@@ -18,12 +18,12 @@ bot = telebot.TeleBot(TOKEN)
 def start_check_admin(message):
     admin_list = ekaterina_data.get_admin_list()
 
-    if message.from_user.id in admin_list:
+    if str(message.from_user.id) in admin_list:
         bot.send_message(message.from_user.id, 'Выберите действие', reply_markup=ekaterina_buttons.admin_main())
         bot.register_next_step_handler(message, admin_check_command)
 
     else:
-        bot.send_message(message, 'Команда не разспознана, попробуйте другую')
+        bot.send_message(message.from_user.id, 'Команда не разспознана, попробуйте другую')
 
 def admin_check_command(message):
     command = message.text
@@ -50,10 +50,14 @@ def admin_check_command(message):
 
 def admin_requests_menu(message):
     command = message.text
-    command_list = ['Получить вопрос по ID', 'Получить вопрос по имени', 'Получить вопрос по username', 'Назад', 'Отмена']
+    command_list = ['Получить запрос по ID', 'Получить запрос по имени', 'Получить запрос по username', 'Получить запрос по статусу', 'Получить запрос по сфере/категории', 'Назад', 'Отмена']
 
     if command in command_list:
-        pass
+        if command == 'Получить запрос по ID':
+            bot.send_message(message.from_user.id, 'Введите/выберите ID (номер) запроса', reply_markup=ekaterina_buttons.admin_get_quantity_requests())
     else:
         bot.send_message(message.from_user.id, 'Команда не распознана, попробуйте другую или можете вернуться в главное меню', reply_markup=ekaterina_buttons.cancel())
         bot.register_next_step_handler(message, admin_requests_menu)
+
+
+bot.polling(non_stop=True)

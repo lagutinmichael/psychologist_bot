@@ -154,7 +154,6 @@ def get_info_username(name: str) -> list:
     line = [message, telegram_id]
     return line
 
-print(get_info_name('Misha'))
 
 # получение информации по id
 def get_info_id(id:str) -> list:
@@ -223,14 +222,14 @@ def get_info_category(category: str) -> list:
 
 ## СТАТИСТИКА
 # получение колличество пользователей
-def get_quantity_users():
+def get_statistic_users():
     data = main_list.col_values(2)
     data = len(list(set(data[1:])))
 
     return data
 
 # получение колличество заявок
-def get_quantity_request():
+def get_statistic_request():
     data = main_list.col_values(1)
     data = len(data[1:])
 
@@ -272,7 +271,7 @@ def get_question_name(name: str):
     return list_info
 
 # получить вопрос по username
-def get_question_name(username: str):
+def get_question_username(username: str):
     cell = question_list.find(username, in_column=3)
     data = question_list.row_values(cell.row)
 
@@ -319,3 +318,18 @@ def get_admin_list():
     data = data[1:]
 
     return data
+
+# получить колличество запросов
+def get_quantity_requests():
+    data = main_list.col_values(1)
+    data = data[1:]
+
+    return data
+
+# получить колличество вопросов
+def get_quantity_questions():
+    data = question_list.col_values(1)
+    data = data[1:]
+
+    return data
+
