@@ -29,21 +29,46 @@ def admin_check_command(message):
     command = message.text
     command_list = ['Запросы', 'Вопросы', 'Статистика', 'Рассылка']
     if command in command_list:
+
         if command == command_list[0]:
-            bot.send_message(message.from_user.id, 'Выберите действие с Запросами', reply_markup=ekaterina_buttons.admin_get_requests())
+            bot.send_message(
+                            message.from_user.id,
+                            'Выберите действие с Запросами',
+                            reply_markup=ekaterina_buttons.admin_get_requests()
+                            )
             bot.register_next_step_handler(message, admin_requests_menu)
+
         elif command == command_list[1]:
-            bot.send_message(message.from_user.id, 'Выберите действие с Вопросами', reply_markup=ekaterina_buttons.admin_get_question())
+            bot.send_message(
+                            message.from_user.id,
+                            'Выберите действие с Вопросами',
+                            reply_markup=ekaterina_buttons.admin_get_question()
+                            )
             bot.register_next_step_handler(message, admin_question_menu)
+
         elif command == command_list[2]:
-            bot.send_message(message.from_user.id, 'Какую статистику вы хотите узнать?', reply_markup=ekaterina_buttons.admin_get_statistics())
+            bot.send_message(
+                            message.from_user.id,
+                            'Какую статистику вы хотите узнать?',
+                            reply_markup=ekaterina_buttons.admin_get_statistics()
+                            )
             bot.register_next_step_handler(message, admin_statistics_menu)
+
         elif command == command_list[3]:
-            bot.send_message(message.from_user.id, 'Выберите, кому хотите отрпавить рассылку', reply_markup=ekaterina_buttons.admin_send_message())
+            bot.send_message(
+                            message.from_user.id,
+                            'Выберите, кому хотите отрпавить рассылку',
+                            reply_markup=ekaterina_buttons.admin_send_message()
+                            )
             bot.register_next_step_handler(message, admin_send_message)
+
         else:
-            bot.send_message(message.from_user.id, 'Команда не найдена. \nПопробуйте еще раз или свяжитесь с разработчиком бота')
+            bot.send_message(
+                            message.from_user.id,
+                            '''Команда не найдена. \nПопробуйте еще раз 
+                            или свяжитесь с разработчиком бота''')
             bot.register_next_step_handler(message, admin_check_command)
+
     else:
         bot.send_message(message.from_user.id, 'Команда не распознана, попробуйте другую', reply_markup=ekaterina_buttons.admin_main())
         bot.register_next_step_handler(message, admin_check_command)
@@ -54,10 +79,46 @@ def admin_requests_menu(message):
 
     if command in command_list:
         if command == 'Получить запрос по ID':
-            bot.send_message(message.from_user.id, 'Введите/выберите ID (номер) запроса', reply_markup=ekaterina_buttons.admin_get_quantity_requests())
+            data = len(ekaterina_data.get_quantity_requests())
+            bot.send_message(
+                            message.from_user.id, 
+                            f'Введите/выберите ID (номер) запроса\nКоличество запросов: {data}',
+                            reply_markup=ekaterina_buttons.admin_get_quantity_requests_inline()
+                            )
+            bot.register_next_step_handler(message, admin_requests_menu)
+
+        elif command == 'Получить запрос по имени':
+            bot.send_message(
+                            message.from_user.id, 
+                            'Введите имя для начала поиска',
+                            reply_markup=ekaterina_buttons.cancel()
+                            )
+            bot.register_next_step_handler(message, admin_request_name)
+        elif command == 'Получить запрос по username':
+            bot.send_message(
+                            message.from_user.id,
+                            'Введите username для начала поиска',
+                            reply_markup=ekaterina_buttons.cancel()
+                            )
+            bot.register_next_step_handler(message, admin_request_username)
     else:
         bot.send_message(message.from_user.id, 'Команда не распознана, попробуйте другую или можете вернуться в главное меню', reply_markup=ekaterina_buttons.cancel())
         bot.register_next_step_handler(message, admin_requests_menu)
+
+# функция для поиска и получения информации о запросе по имени
+def admin_request_name(message):
+    pass
+
+
+@bot.callback_query_handler(func= lambda call: True)
+def callback_inline(call):
+    pass
+'''
+Нужно разобраться как определяется функция с которой контактиурет 
+inline-клаввиатура, чтоб можно было легко использовать функции 
+с различных баз данных
+'''
+
 
 
 bot.polling(non_stop=True)
