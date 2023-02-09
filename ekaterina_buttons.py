@@ -75,7 +75,7 @@ def admin_main():
 
     return kb
 
-# ADMIN работа с пользователем (не помню функционал)
+# ADMIN отправка сообщения, после поиска нужного человека
 def admin_send_message():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1, one_time_keyboard=True)
 
@@ -127,18 +127,8 @@ def admin_get_requests():
 
     return kb
 
-'''
-# ADMIN кнопки для выбора запроса по id
-def admin_get_quantity_requests():
-    data = ekaterina_data.get_quantity_requests()
 
-    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=5)
-   
-    list_buttons = [types.KeyboardButton(i) for i in data]
-    kb.add(list_buttons)
-    return kb
-'''
-# InlineKeybord для выбора номера вопроса по ID
+# InlineKeybord для выбора номера запроса по ID
 def admin_get_quantity_requests_inline():
     data = ekaterina_data.get_quantity_requests()
     a = len(data) # количество элементов в таблице
@@ -151,11 +141,11 @@ def admin_get_quantity_requests_inline():
     kb = types.InlineKeyboardMarkup(row_width=5)
     index = 0
     for i in range(b):
-        bt1 = types.InlineKeyboardButton(str(1+index), callback_data=1+index)
-        bt2 = types.InlineKeyboardButton(str(2+index), callback_data=+index)
-        bt3 = types.InlineKeyboardButton(str(3+index), callback_data=3+index)
-        bt4 = types.InlineKeyboardButton(str(4+index), callback_data=4+index)
-        bt5 = types.InlineKeyboardButton(str(5+index), callback_data=5+index)
+        bt1 = types.InlineKeyboardButton(str(1+index), callback_data='1_'+f'{1+index}')
+        bt2 = types.InlineKeyboardButton(str(2+index), callback_data='1_'+f'{2+index}')
+        bt3 = types.InlineKeyboardButton(str(3+index), callback_data='1_'+f'{3+index}')
+        bt4 = types.InlineKeyboardButton(str(4+index), callback_data='1_'+f'{4+index}')
+        bt5 = types.InlineKeyboardButton(str(5+index), callback_data='1_'+f'{5+index}')
 
         kb.row(bt1, bt2, bt3, bt4, bt5)
         
@@ -163,14 +153,27 @@ def admin_get_quantity_requests_inline():
 
     return kb
 
-
-# ADMIN кнопки для выбора вопроса по id
-def admin_get_quantity_questions():
+# InlineKeybord для выбора номера вопроса по ID
+def admin_get_quantity_question_inline():
     data = ekaterina_data.get_quantity_questions()
-
-    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=5)
+    a = len(data) # количество элементов в таблице
+    c = a%5 # остаток от деления на 5
+    if c == 0:
+        b = (a//5) # количество строк для кнопок
+    else:
+        b = (a//5) + 1 # колличество строк, если в последней строке не все кнопки
     
-    for i in data:
-        kb.add(types.KeyboardButton(i))
+    kb = types.InlineKeyboardMarkup(row_width=5)
+    index = 0
+    for i in range(b):
+        bt1 = types.InlineKeyboardButton(str(1+index), callback_data='2_'+f'{1+index}')
+        bt2 = types.InlineKeyboardButton(str(2+index), callback_data='2_'+f'{2+index}')
+        bt3 = types.InlineKeyboardButton(str(3+index), callback_data='2_'+f'{3+index}')
+        bt4 = types.InlineKeyboardButton(str(4+index), callback_data='2_'+f'{4+index}')
+        bt5 = types.InlineKeyboardButton(str(5+index), callback_data='2_'+f'{5+index}')
+
+        kb.row(bt1, bt2, bt3, bt4, bt5)
+        
+        index +=5
 
     return kb

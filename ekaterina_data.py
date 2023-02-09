@@ -29,7 +29,7 @@ other_list = table.worksheet('other')
 
 ## ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ
 def new_user_add(telegram_id, name, username, number, category, wishes, comments):
-    id = len(main_list.col_values(1)) #вычисляем новый id по колличеству уже имеющихся
+    id = '1_' + f'{len(main_list.col_values(1))}' #вычисляем новый id по колличеству уже имеющихся
     lower_name = name.lower()
     tz_tashkent = pytz.timezone("Asia/Tashkent")
     dt_tashkent =str(datetime.datetime.now(tz_tashkent))
@@ -122,7 +122,7 @@ def get_info_name(name: str) -> list:
     cell = main_list.find(find_name, in_column=3) # поиск ячейки по имени
     data = main_list.row_values(cell.row) # получение всех значечений строки по ячейке
 
-    id = data[0]
+    id = data[0][2:]
     username = data[3]
     phone = data[4]
     category = data[5]
@@ -130,17 +130,25 @@ def get_info_name(name: str) -> list:
     comment = data[7]
     status = data [8]
     telegram_id = data[1]
-    message = f'*Информация по поиску "{name}":*\n\n*ID:*{id}\n*Имя*{find_name} | @{username}\n*Телефон:* {phone}\n*Сфера:* {category}\n*Пожелания:* {wishes}\n*Комментарий:* {comment}\n\n*Статус:* {status}'
+    message = f'''  <b>Информация по поиску "{name}":</b>
+    <b>ID:</b> <i>{id} </i>
+    <b>Имя:</b> <i>{name}</i> | @{username}
+    <b>Телефон:</b> {phone}
+    <b>Сфера:</b> <i>{category}</i>
+    <b>Пожелания:</b> <i>{wishes}</i>
+    <b>Комментарий:</b> <i>{comment}</i>
+    <b>Статус:</b> <i>{status}</i>
+    '''
     
     line = [message, telegram_id]
     return line
 
 # получение информации по username
-def get_info_username(name: str) -> list:
+def get_info_username(username: str) -> list:
     cell = main_list.find(username, in_column=4) # поиск ячейки по имени
     data = main_list.row_values(cell.row) # получение всех значечений строки по ячейке
 
-    id = data[0]
+    id = data[0][2:]
     name = data[2]
     username = data[3]
     phone = data[4]
@@ -149,8 +157,15 @@ def get_info_username(name: str) -> list:
     comment = data[7]
     status = data [8]
     telegram_id = data[1] #нужен, чтоб по этому запросу из БД можно было отправит сообщение напрямую пользователю
-    message = f'*Информация по поиску "{name}":*\n\n*ID:*{id}\n*Имя*{name} | @{username}\n*Телефон:* {phone}\n*Сфера:* {category}\n*Пожелания:* {wishes}\n*Комментарий:* {comment}\n\n*Статус:* {status}'
-
+    message = f'''  <b>Информация по поиску "{name}":</b>
+    <b>ID:</b> <i>{id} </i>
+    <b>Имя:</b> <i>{name}</i> | @{username}
+    <b>Телефон:</b> {phone}
+    <b>Сфера:</b> <i>{category}</i>
+    <b>Пожелания:</b> <i>{wishes}</i>
+    <b>Комментарий:</b> <i>{comment}</i>
+    <b>Статус:</b> <i>{status}</i>
+'''
     line = [message, telegram_id]
     return line
 
@@ -159,7 +174,7 @@ def get_info_username(name: str) -> list:
 def get_info_id(id:str) -> list:
     data = main_list.row_values(int(id)+1) # получение значений строки по id
 
-    id = data[0]
+    id = data[0][2:]
     name = data[2]
     username = data[3]
     phone = data[4]
@@ -168,8 +183,15 @@ def get_info_id(id:str) -> list:
     comment = data[7]
     status = data[8]
     telegram_id = data[1]
-    message = f'*Информация по поиску | ID№ {id}:*\n\n*ID:*{id}\n*Имя*{name} | @{username}\n*Телефон:* {phone}\n*Сфера:* {category}\n*Пожелания:* {wishes}\n*Комментарий:* {comment}\n\n*Статус:* {status}'
-
+    message = f'''  <b>Информация по поиску | ID №_{id}:
+    ID:</b>{id}
+    <b>Имя:</b> <i>{name}</i> | @{username}
+    <b>Телефон:</b> {phone}
+    <b>Сфера:</b> <i>{category}</i>
+    <b>Пожелания:</b> <i>{wishes}</i>
+    <b>Комментарий:</b> <i>{comment}</i>
+    <b>Статус:</b> <i>{status}</i>
+'''
     line = [message, telegram_id]
     return line
 
@@ -191,7 +213,15 @@ def get_info_status(status: str) -> list:
             wishes = value[6]
             comment = value[7]
 
-            message = f'*Информация по поиску | Статус: {status}:*\n\n*ID:*{id}\n*Имя*{name} | @{username}\n*Телефон:* {phone}\n*Сфера:* {category}\n*Пожелания:* {wishes}\n*Комментарий:* {comment}\n\n*Статус:* {status}'
+            message = f'''<b>Информация по поиску | Статус: {status}:</b>
+            <b>ID:</b> <i>{id} </i>
+            </b>Имя:</b> <i>{name}</i> | @{username}
+            <b>Телефон:</b> {phone}
+            <b>Сфера:</b> <i>{category}</i>
+            <b>Пожелания:</b> <i>{wishes}</i>
+            <b>Комментарий:</b> <i>{comment}</i>
+            <b>Статус:</b> <i>{status}</i>
+            '''
 
             array.append(message)
 
@@ -207,15 +237,22 @@ def get_info_category(category: str) -> list:
         index += 1
         if i == category:
             value = main_list.row_values(index)
-            id = value[0]
+            id = value[0][2:]
             name = value[2]
             username = value[3]
             phone = value[4]
             wishes = value[6]
             comment = value[7]
             status = value[8]
-            message = f'*Информация по поиску | Сфера: {category}:*\n\n*ID:*{id}\n*Имя*{name} | @{username}\n*Телефон:* {phone}\n*Сфера:* {category}\n*Пожелания:* {wishes}\n*Комментарий:* {comment}\n\n*Статус:* {status}'
-
+            message = f'''*Информация по поиску | Сфера: {category}:
+            <b>ID:</b> <i>{id} </i>
+            </b>Имя:</b> <i>{name}</i> | @{username}
+            <b>Телефон:</b> {phone}
+            <b>Сфера:</b> <i>{category}</i>
+            <b>Пожелания:</b> <i>{wishes}</i>
+            <b>Комментарий:</b> <i>{comment}</i>
+            <b>Статус:</b> <i>{status}</i>
+            '''
             array.append(message)
 
     return array
@@ -240,7 +277,7 @@ def get_statistic_request():
 
 # добавить новый вопрос
 def new_question(telegram_id: str, name: str, username: str, question: str):
-    id = len(main_list.col_values(1)) #вычисляем новый id по колличеству уже имеющихся
+    id = '2_' + f'{len(main_list.col_values(1))}' #вычисляем новый id по колличеству уже имеющихся
     lower_name = name.lower()
     tz_tashkent = pytz.timezone("Asia/Tashkent")
     dt_tashkent =str(datetime.datetime.now(tz_tashkent))
@@ -265,7 +302,7 @@ def get_question_name(name: str):
     cell = question_list.find(lower_name, in_column=3)
     data = question_list.row_values(cell.row)
 
-    message = f'Поиск вопроса по мени: {data[2]}:\n\nID: {data[0]}\nИмя: {data[2]} | @{data[3]}\n\nВопрос:\n{data[4]}'
+    message = f'Поиск вопроса по мени: {data[2]}:\n\nID: {data[0][2:]}\nИмя: {data[2]} | @{data[3]}\n\nВопрос:\n{data[4]}'
     list_info = [message, data[1]]
 
     return list_info
@@ -275,7 +312,7 @@ def get_question_username(username: str):
     cell = question_list.find(username, in_column=3)
     data = question_list.row_values(cell.row)
 
-    message = f'Поиск вопроса по username: {data[2]}:\n\nID: {data[0]}\nИмя: {data[2]} | @{data[3]}\n\nВопрос:\n{data[4]}'
+    message = f'Поиск вопроса по username: {data[2]}:\n\nID: {data[0][2:]}\nИмя: {data[2]} | @{data[3]}\n\nВопрос:\n{data[4]}'
     list_info = [message, data[1]]
 
     return list_info
