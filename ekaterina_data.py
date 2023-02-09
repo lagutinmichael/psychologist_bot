@@ -144,7 +144,7 @@ def get_info_name(name: str) -> list:
     return line
 
 # получение информации по username
-def get_info_username(username: str) -> list:
+def get_request_username(username: str) -> list:
     cell = main_list.find(username, in_column=4) # поиск ячейки по имени
     data = main_list.row_values(cell.row) # получение всех значечений строки по ячейке
 
@@ -171,7 +171,7 @@ def get_info_username(username: str) -> list:
 
 
 # получение информации по id
-def get_info_id(id:str) -> list:
+def get_request_id(id:str) -> list:
     data = main_list.row_values(int(id)+1) # получение значений строки по id
 
     id = data[0][2:]
@@ -183,8 +183,8 @@ def get_info_id(id:str) -> list:
     comment = data[7]
     status = data[8]
     telegram_id = data[1]
-    message = f'''  <b>Информация по поиску | ID №_{id}:
-    ID:</b>{id}
+    message = f'''  <b>Информация по поиску | ID № {id}:
+    ID:</b> {id}
     <b>Имя:</b> <i>{name}</i> | @{username}
     <b>Телефон:</b> {phone}
     <b>Сфера:</b> <i>{category}</i>
@@ -196,7 +196,7 @@ def get_info_id(id:str) -> list:
     return line
 
 # получение информации по статусу
-def get_info_status(status: str) -> list:
+def get_request_status(status: str) -> list:
     data = main_list.col_values(9) # получение всех статусов
     data = data[1:] # убираем название заголовка
     index = 0 # счетчик для строк
@@ -215,7 +215,7 @@ def get_info_status(status: str) -> list:
 
             message = f'''<b>Информация по поиску | Статус: {status}:</b>
             <b>ID:</b> <i>{id} </i>
-            </b>Имя:</b> <i>{name}</i> | @{username}
+            <b>Имя:</b> <i>{name}</i> | @{username}
             <b>Телефон:</b> {phone}
             <b>Сфера:</b> <i>{category}</i>
             <b>Пожелания:</b> <i>{wishes}</i>
@@ -228,7 +228,7 @@ def get_info_status(status: str) -> list:
     return array
 
 # получение информации по категории
-def get_info_category(category: str) -> list:
+def get_request_category(category: str) -> list:
     data = main_list.col_values(6)
     data = data[1:]
     index = 0
