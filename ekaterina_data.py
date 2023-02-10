@@ -138,6 +138,8 @@ def get_info_name(name: str) -> list:
     <b>Пожелания:</b> <i>{wishes}</i>
     <b>Комментарий:</b> <i>{comment}</i>
     <b>Статус:</b> <i>{status}</i>
+
+    <b>Telegram id:</b> <i>{telegram_id}</i>
     '''
     
     line = [message, telegram_id]
@@ -165,6 +167,8 @@ def get_request_username(username: str) -> list:
     <b>Пожелания:</b> <i>{wishes}</i>
     <b>Комментарий:</b> <i>{comment}</i>
     <b>Статус:</b> <i>{status}</i>
+
+    <b>Telegram id:</b> <i>{telegram_id}</i>
 '''
     line = [message, telegram_id]
     return line
@@ -191,6 +195,8 @@ def get_request_id(id:str) -> list:
     <b>Пожелания:</b> <i>{wishes}</i>
     <b>Комментарий:</b> <i>{comment}</i>
     <b>Статус:</b> <i>{status}</i>
+
+    <b>Telegram id:</b> <i>{telegram_id}</i>
 '''
     line = [message, telegram_id]
     return line

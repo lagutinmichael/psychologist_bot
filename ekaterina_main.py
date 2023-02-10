@@ -201,15 +201,15 @@ def callback_inline(call):
     data = call.data
     table = data[0]
     if table == '1':
-        message = ekaterina_data.get_request_id(data[0])
+        message = ekaterina_data.get_request_id(data[2:])
         bot.edit_message_text(
                             text = message,
                             parse_mode='html',
                             chat_id=call.message.chat.id,
                             message_id=call.message.message_id, 
-                            reply_markup=ekaterina_buttons.admin_send_message(),
+                            reply_markup=ekaterina_buttons.admin_get_quantity_requests_inline(),
                             )
-        bot.register_next_step_handler(message, admin_request_id_action, data)
+        #bot.register_next_step_handler(call, admin_request_id_action)
 
 
 bot.polling(non_stop=True)
