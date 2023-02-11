@@ -84,9 +84,11 @@ def admin_requests_menu(message):
             bot.send_message(
                             message.from_user.id, 
                             f'Введите/выберите ID (номер) запроса\nКоличество запросов: {data}',
-                            reply_markup=ekaterina_buttons.admin_get_quantity_requests_inline()
+                            reply_markup=ekaterina_buttons.admin_get_quantity_requests_inline(),
                             )
-            bot.register_next_step_handler(message, admin_requests_menu)
+            time.sleep(0.5)
+            bot.send_message(message.from_user.id, 'Отправить ему оповещениие?', reply_markup=ekaterina_buttons.admin_send_message_inline())
+            bot.register_next_step_handler(message, admin_request_id_action_message)
 
         elif command == 'Получить запрос по имени':
             bot.send_message(
@@ -102,6 +104,27 @@ def admin_requests_menu(message):
                             reply_markup=ekaterina_buttons.cancel()
                             )
             bot.register_next_step_handler(message, admin_request_username)
+        
+        elif command == 'Получить запрос по статусу':
+            bot.send_message(
+                            message.from_user.id,
+                            'Введите статус для начала поиска',
+                            reply_markup=ekaterina_buttons.cancel()
+                            )
+            bot.register_next_step_handler(message, admin_request_satatus)
+
+        elif command == 'Получить запрос по сфере/категории':
+            bot.send_message(
+                            message.from_user.id,
+                            'Введите сферу, по которой будет вестись поиск',
+                            reply_markup=ekaterina_buttons.cancel()
+                            )
+            bot.register_next_step_handler(message, admin_request_category)
+            
+
+        elif command == 'Назад' or command == 'Отмена':
+            bot.send_message(message.from_user.id, 'Выберите действие', reply_markup=ekaterina_buttons.admin_main())
+            bot.register_next_step_handler(message, admin_check_command)
     else:
         bot.send_message(message.from_user.id, 'Команда не распознана, попробуйте другую или можете вернуться в главное меню', reply_markup=ekaterina_buttons.cancel())
         bot.register_next_step_handler(message, admin_requests_menu)
@@ -110,7 +133,7 @@ def admin_requests_menu(message):
 def admin_request_name(message):
     name = message.text
     data = ekaterina_data.get_request_name(name)
-    bot.send_message(message.from_user.id, data[0], reply_markup=ekaterina_buttons.admin_send_message())
+    bot.send_message(message.from_user.id, data[1], reply_markup=ekaterina_buttons.admin_send_message(), parse_mode='html')
     bot.register_next_step_handler(message, admin_request_name_action, data)
 
 def admin_request_name_action(message, data):
@@ -137,13 +160,13 @@ def admin_request_name_action_message(message, data):
 def admin_request_username(message):
     username = message.text
     username = username.strip()
-    data = ekaterina_data.get_request_username(username)
 
     if username[0] == '@':
+        data = ekaterina_data.get_request_username(username[1:])
         bot.send_message(message.from_user.id, data[0], reply_markup=ekaterina_buttons.admin_send_message())
         bot.register_next_step_handler(message, admin_request_username_action, data)
     else:
-        username = '@'+username
+        data = ekaterina_data.get_request_username(username)
         bot.send_message(message.from_user.id, data[0], reply_markup=ekaterina_buttons.admin_send_message())
         bot.register_next_step_handler(message, admin_request_username_action, data)
 
@@ -169,12 +192,12 @@ def admin_request_username_action_message(message, data):
 
 
 # ГЛАВНОЕ МЕНЮ - ЗАПРОСЫ - по id
-def admin_request_id_action(message, data):
+def admin_request_id_action(message):
     command = message.text
 
     if command == 'Отправить сообщение':
-        bot.send_message(message.from_user.id, 'Отправьте сообщение пользователю', reply_markup=ekaterina_buttons.cancel())
-        bot.register_next_step_handler(message, admin_request_id_action_message, data)
+        bot.send_message(message.from_user.id, 'Введите telegram_id пользователя', reply_markup=ekaterina_buttons.cancel())
+        bot.register_next_step_handler(message, admin_request_id_action_message)
     elif command == 'Назад':
         bot.send_message(message.from_user.id, 'Выберите действие с запросами', reply_markup=ekaterina_buttons.admin_get_requests())
         bot.register_next_step_handler(message, admin_requests_menu)
@@ -182,14 +205,86 @@ def admin_request_id_action(message, data):
         bot.send_message(message.from_user.id, 'Команда не распознана, начните с начала', reply_markup=ekaterina_buttons.admin_main())
         bot.register_next_step_handler(message, admin_check_command)
 
-def admin_request_id_action_message(message, data):
+def admin_request_id_action_message(message):
+    text = message.text
+    if text.isdigit():
+        telegram_id = message.text
+        telegram_id = telegram_id.strip()
+        telegram_id = int(telegram_id)
+
+        bot.send_message(message.from_user.id, 'Введите текст сообщения', reply_markup=ekaterina_buttons.cancel())
+        bot.register_next_step_handler(message, admin_request_id_action_send_message, telegram_id)
+    elif not text.isdigit():
+        bot.send_message(message.from_user.id, 'Выберите команду', reply_markup=ekaterina_buttons.admin_get_requests())
+        bot.register_next_step_handler(message, admin_requests_menu)
+
+def admin_request_id_action_send_message(message, telegram_id):
     text = message.text
 
-    bot.send_message(data[1], text)
-    bot.send_message(message.from_user.id, 'Сообщение успешно доставлено пользователю \nВыберите действие', reply_markup=ekaterina_buttons.admin_main())
+    bot.send_message(telegram_id, text)
+    bot.send_message(message.from_user.id, 'Сообщение доставлено', reply_markup=ekaterina_buttons.admin_main())
     bot.register_next_step_handler(message, admin_check_command)
 
 
+# ГЛАВНОЕ МЕНЮ - ЗАПРОСЫ - по статусу
+def admin_request_satatus(message):
+    
+    if message.text == 'Отмена':
+        bot.send_message(message.from_user.id, 'Выберите действие с запросами', reply_markup=ekaterina_buttons.admin_get_requests())
+        bot.register_next_step_handler(message, admin_requests_menu)
+    else:
+        status = message.text
+        data = ekaterina_data.get_request_status(status=status)
+
+        bot.send_message(message.from_user.id, data, parse_mode='html', reply_markup=ekaterina_buttons.admin_get_requests())
+        bot.register_next_step_handler(message, admin_requests_menu)
+
+
+# ГЛАВНОЕ МЕНЮ - ЗАПРОСЫ - по категории/сфере
+def admin_request_category(message):
+    
+    if message.text == 'Отмена':
+        bot.send_message(message.from_user.id, 'Выберите действие с запросами', reply_markup=ekaterina_buttons.admin_get_requests())
+        bot.register_next_step_handler(message, admin_requests_menu)
+    else:
+        category = message.text
+        data = ekaterina_data.get_request_category(category)
+        bot.send_message(message.from_user.id, data, parse_mode='html', reply_markup=ekaterina_buttons.admin_get_requests())
+        bot.register_next_step_handler(message, admin_requests_menu)
+
+
+# ГЛАВНОЕ МЕНЮ - ВОПРОСЫ
+def admin_question_menu(message):
+    command = message.text
+
+    command_list = ['Получить вопрос по ID', 'Получить вопрос по имени', 'Получить вопрос по username', 'Назад', 'Отмена']
+
+    if command in command_list:
+        if command == 'Получить вопрос по ID':
+            pass
+        elif command == 'Получить вопрос по имени':
+            pass
+        elif command == 'Получить вопрос по username':
+            pass
+        elif command == 'Назад' or command == 'Отмена':
+            bot.send_message(message.from_user.id, 'Выберите действие', reply_markup=ekaterina_buttons.admin_main())
+            bot.register_next_step_handler(message, admin_check_command)
+    else:
+        bot.send_message(
+                        message.from_user.id,
+                        'Введена неизвестная команда, давайте начнём сначала',
+                        reply_markup=ekaterina_buttons.admin_main()
+                        )
+        bot.register_next_step_handler(message, admin_check_command)
+
+
+    '''
+    ДОПИСАТЬ ФУНКЦИОНАЛ ДЛЯ РАБОТЫ С ВОПРОСАМИ
+    '''
+
+#---#---#---#---#---#---#---#---#---
+#---#---#---#---#---#---#---#---#---#---#---#---
+#---#---#---#---#---#---#---#---#---#---#---#---
 
 # ОБРАБОТЧИК КОМАНД inline клавиатур
 @bot.callback_query_handler(func= lambda call: True)
@@ -205,11 +300,12 @@ def callback_inline(call):
         bot.edit_message_text(
                             text = message,
                             parse_mode='html',
-                            chat_id=call.message.chat.id,
+                            chat_id=call.from_user.id,
                             message_id=call.message.message_id, 
-                            reply_markup=ekaterina_buttons.admin_get_quantity_requests_inline(),
+                            reply_markup=ekaterina_buttons.admin_get_quantity_requests_inline()
                             )
-        #bot.register_next_step_handler(call, admin_request_id_action)
+    if call.data == 'send_message_id_yes':
+        bot.send_message(call.from_user.id, 'Отправьте Telegram_id (он указан выше)')
 
 
 bot.polling(non_stop=True)

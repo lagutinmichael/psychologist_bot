@@ -115,9 +115,9 @@ def get_telegram_id_username(username: str):
 
 
 
-## ПОИСК / получение информации
-# получение информации по имени
-def get_info_name(name: str) -> list:
+## ПОИСК / получение информации о запросах
+# получение запросов по имени
+def get_request_name(name: str) -> list:
     find_name = name.lower()
     cell = main_list.find(find_name, in_column=3) # поиск ячейки по имени
     data = main_list.row_values(cell.row) # получение всех значечений строки по ячейке
@@ -139,13 +139,13 @@ def get_info_name(name: str) -> list:
     <b>Комментарий:</b> <i>{comment}</i>
     <b>Статус:</b> <i>{status}</i>
 
-    <b>Telegram id:</b> <i>{telegram_id}</i>
+    <b>Telegram id:</b> '{telegram_id}'
     '''
     
     line = [message, telegram_id]
     return line
 
-# получение информации по username
+# получение запросов по username
 def get_request_username(username: str) -> list:
     cell = main_list.find(username, in_column=4) # поиск ячейки по имени
     data = main_list.row_values(cell.row) # получение всех значечений строки по ячейке
@@ -168,13 +168,13 @@ def get_request_username(username: str) -> list:
     <b>Комментарий:</b> <i>{comment}</i>
     <b>Статус:</b> <i>{status}</i>
 
-    <b>Telegram id:</b> <i>{telegram_id}</i>
+    <b>Telegram id:</b> '{telegram_id}'
 '''
     line = [message, telegram_id]
     return line
 
 
-# получение информации по id
+# получение запросов по id
 def get_request_id(id:str) -> list:
     data = main_list.row_values(int(id)+1) # получение значений строки по id
 
@@ -196,12 +196,12 @@ def get_request_id(id:str) -> list:
     <b>Комментарий:</b> <i>{comment}</i>
     <b>Статус:</b> <i>{status}</i>
 
-    <b>Telegram id:</b> <i>{telegram_id}</i>
+    <b>Telegram id:</b> '{telegram_id}'
 '''
     line = [message, telegram_id]
     return line
 
-# получение информации по статусу
+# получение запросов по статусу
 def get_request_status(status: str) -> list:
     data = main_list.col_values(9) # получение всех статусов
     data = data[1:] # убираем название заголовка
@@ -218,6 +218,7 @@ def get_request_status(status: str) -> list:
             category = value[5]
             wishes = value[6]
             comment = value[7]
+            telegram_id = value[1]
 
             message = f'''<b>Информация по поиску | Статус: {status}:</b>
             <b>ID:</b> <i>{id} </i>
@@ -227,13 +228,15 @@ def get_request_status(status: str) -> list:
             <b>Пожелания:</b> <i>{wishes}</i>
             <b>Комментарий:</b> <i>{comment}</i>
             <b>Статус:</b> <i>{status}</i>
+            
+            <b>Telegram_id: {telegram_id}<br><br>
             '''
 
             array.append(message)
 
     return array
 
-# получение информации по категории
+# получение запросов по категории
 def get_request_category(category: str) -> list:
     data = main_list.col_values(6)
     data = data[1:]
@@ -375,4 +378,3 @@ def get_quantity_questions():
     data = data[1:]
 
     return data
-

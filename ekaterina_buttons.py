@@ -177,3 +177,15 @@ def admin_get_quantity_question_inline():
         index +=5
 
     return kb
+
+
+# InlineKeybord для отправки сообщения
+def admin_send_message_inline():
+    kb = types.InlineKeyboardMarkup()
+    
+    bt1 = types.InlineKeyboardButton('Да', callback_data='send_message_id_yes')
+    #bt2 = types.InlineKeyboardButton('Нет', callback_data='send_message_id_no')
+
+    kb.add(bt1)
+
+    return kb
