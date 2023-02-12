@@ -103,8 +103,8 @@ def admin_get_question():
 def admin_get_statistics():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
 
-    button_1 = types.KeyboardButton('Колличество заявок')
-    button_2 = types.KeyboardButton('Колличество пользователей')
+    button_1 = types.KeyboardButton('Количество заявок')
+    button_2 = types.KeyboardButton('Количество пользователей')
     button_3 = types.KeyboardButton('Назад')
 
     kb.add(button_1, button_2, button_3)
@@ -179,7 +179,7 @@ def admin_get_quantity_question_inline():
     return kb
 
 
-# InlineKeybord для отправки сообщения
+# InlineKeybord для ответа на запрос
 def admin_send_message_inline():
     kb = types.InlineKeyboardMarkup()
     
@@ -187,5 +187,15 @@ def admin_send_message_inline():
     #bt2 = types.InlineKeyboardButton('Нет', callback_data='send_message_id_no')
 
     kb.add(bt1)
+
+    return kb
+
+# InlineKeyboard для ответа на сообщения
+def admin_answer_question_inline():
+    kb = types.InlineKeyboardMarkup()
+
+    bt = types.InlineKeyboardButton('Да', callback_data='answer_question_id')
+
+    kb.add(bt)
 
     return kb
