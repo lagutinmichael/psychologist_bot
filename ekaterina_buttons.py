@@ -33,6 +33,17 @@ def wishes():
     kb.add(list_buttons)
     return kb
 
+def admin_wishes():
+    data = ekaterina_data.get_list_wishes()
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+
+    list_buttons = [types.KeyboardButton(i) for i in data]
+   # for i in data:
+   #     kb.add(types.KeyboardButton(i))
+    kb.add(list_buttons)
+    kb.row(types.KeyboardButton('Отмена'))
+    return kb
+
 # USER кнопки возрастов
 def ages():
     data = ekaterina_data.get_list_age()
@@ -41,7 +52,17 @@ def ages():
 
     for i in data:
         kb.add(types.KeyboardButton(i))
+    return kb
 
+def admin_ages():
+    data = ekaterina_data.get_list_age()
+
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+
+    for i in data:
+        kb.add(types.KeyboardButton(i))
+
+    kb.row(types.KeyboardButton('Отмена'))
     return kb
 
 # USER кнопки с категориями
@@ -55,6 +76,28 @@ def category():
 
     return kb
 
+def admin_category():
+    data = ekaterina_data.get_list_category()
+
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
+
+    for i in data:
+        kb.add(types.KeyboardButton(i))
+
+    kb.add(types.ReplyKeyboardMarkup('Отмена'))
+    return kb
+
+# ADMIN кнопки со статусами 
+def admin_category():
+    data = ekaterina_data.admin_get_status()
+
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
+
+    for i in data:
+        kb.add(types.KeyboardButton(i))
+
+    kb.add(types.ReplyKeyboardMarkup('Отмена'))
+    return kb
 
 
 
@@ -197,5 +240,23 @@ def admin_answer_question_inline():
     bt = types.InlineKeyboardButton('Да', callback_data='answer_question_id')
 
     kb.add(bt)
+
+    return kb
+
+
+# клавиатура выбора куда отправлять рассылку
+def admin_mailng_main():
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+
+    bt1 = types.KeyboardButton('Категории/Сфера')
+    bt2 = types.KeyboardButton('Пожелания')
+    bt3 = types.KeyboardButton('Статус')
+    bt4 = types.KeyboardButton('Всем')
+    bt5 = types.KeyboardButton('Назад')
+    bt6 = types.KeyboardButton('Возвраст')
+
+    kb.add(bt4, bt3, bt1, bt2)
+    kb.row(bt6)
+    kb.row(bt5)
 
     return kb

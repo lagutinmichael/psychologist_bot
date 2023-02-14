@@ -58,7 +58,7 @@ def admin_check_command(message):
             bot.send_message(
                             message.from_user.id,
                             'Выберите, кому хотите отрпавить рассылку',
-                            reply_markup=ekaterina_buttons.admin_send_message()
+                            reply_markup=ekaterina_buttons.admin_mailng_main()
                             )
             bot.register_next_step_handler(message, admin_send_mailing)
 
@@ -394,6 +394,45 @@ def admin_statistics_menu(message):
     else:
         bot.send_message(message.from_user.id, 'Введена неизвестная команда, попробуйте снова или свяжитесь с разработчиком', reply_markup=ekaterina_buttons.admin_main())
         bot.register_next_step_handler(message, admin_check_command)
+
+
+# ГЛАВНОЕ МЕНЮ - РАССЫЛКА
+def admin_send_mailing(message):
+    command = message.text
+
+    command_list = ['Категории/Сфера', 'Пожелания', 'Статус', 'Всем', 'Отмена', 'Назад', 'Возраст']
+
+    if command in command_list:
+
+        if command == 'Категории/Сфера':
+            bot.send_message(message.from_user.id, 'Выберите категорию, по которой вы отправите рассылку', reply_markup=ekaterina_buttons.admin_category())
+            bot.register_next_step_handler(message, admin_send_mailing_category)
+        elif command == 'Пожелания':
+            bot.send_message(message.from_user.id, 'Выберите пожелание, по которой отправите рассылку', reply_markup=ekaterina_buttons.admin_wishes())
+            bot.register_next_step_handler(message, admin_send_mailing_wishes)
+        elif command == 'Статус':
+            bot.send_message(message.from_user.id, 'Выберите статус пользователей, по которой отправите рассылку', reply_markup=ekaterina_buttons.admin_category())
+            bot.register_next_step_handler(message, admin_send_mailing_status)
+            # добавить кнопку со
+        elif command == 'Всем':
+            bot.send_message(message.from_user.id, 'Введите текст сообщения для отправки всем пользователям', reply_markup=ekaterina_buttons.cancel())
+            bot.register_next_step_handler(message, admin_send_meiling_everyone)
+        elif command == 'Возраст':
+            bot.send_message(message.from_user.id, 'Выберите возрастную категорию для отправки рассылки', reply_markup=ekaterina_buttons.admin_ages())
+            bot.register_next_step_handler(message, admin_send_mailing_ages)
+            # добавить кнопки
+        elif command == 'Назад':
+            bot.send_message(message.from_user.id, 'Выберите действие', reply_markup=ekaterina_buttons.admin_main())
+            bot.register_next_step_handler(message, admin_check_command)
+            
+    else:
+        bot.send_message(message.from_user.id, 'Введена не существующая команда, попробуйте снова', reply_markup=ekaterina_buttons.admin_mailng_main())
+        bot.register_next_step_handler(message, admin_send_mailing)
+
+
+
+
+
 
 #---#---#---#---#---#---#---#---#---
 #---#---#---#---#---#---#---#---#---#---#---#---

@@ -89,6 +89,19 @@ def get_telegram_id_status(status: str) -> list:
 
     return list_id
 
+# получение всех telegram-id с определённым желанием
+def get_telegram_id_wish(status: str) -> list:
+    data = main_list.col_values(2) # получаем список со значением столбца telegram_id
+    index = 0 # делаем счетчик для того, чтоб пробегаться по всем строчкам
+    list_id = [] # создаём финальный список для всех id
+    for i in data: # запускаем цикл по всем значениям столбца с telegram_id
+        index += 1 # получаем новую строку для проверки
+        check_status = main_list.cell(index, 7).value # получаем статус по номеру строки
+
+        if check_status == status: # проверяем полученнон желание  с искомым
+            list_id.append(i) # если совпадает - добавляем telegram_id в финальный спиоск
+
+    return list_id
 
 
 
@@ -375,6 +388,13 @@ def get_quantity_requests():
 # получить колличество вопросов
 def get_quantity_questions():
     data = question_list.col_values(1)
+    data = data[1:]
+
+    return data
+
+# admin получить статусы
+def admin_get_status():
+    data = other_list.col_values(6)
     data = data[1:]
 
     return data
