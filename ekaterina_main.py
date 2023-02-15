@@ -424,14 +424,29 @@ def admin_send_mailing(message):
         elif command == 'Назад':
             bot.send_message(message.from_user.id, 'Выберите действие', reply_markup=ekaterina_buttons.admin_main())
             bot.register_next_step_handler(message, admin_check_command)
-            
+
     else:
         bot.send_message(message.from_user.id, 'Введена не существующая команда, попробуйте снова', reply_markup=ekaterina_buttons.admin_mailng_main())
         bot.register_next_step_handler(message, admin_send_mailing)
 
 
+# ГЛАВНОЕ МЕНЮ - РАССЫЛКА - по категориям/сферы
+def admin_send_mailing_category(message):
+    command_list = ekaterina_data.get_list_category()
+    command = message.text
 
+    if command in command_list:
+        bot.send_message(message.from_user.id, 'Введите текст для расслыки', reply_markup=ekaterina_buttons.cancel())
+        bot.register_next_step_handler(message, admin_send_mailing_category_action, command)
+    else:
+        bot.send_message(message.from_user.id, 'Введена неизвестная команда, попробуйте снова', reply_markup=ekaterina_buttons.admin_mailng_main())
+        bot.register_next_step_handler(message, admin_send_mailing)
 
+def admin_send_mailing_category_action(message, command):
+    telegram_id_list = ekaterina_data.get_telegram_id_category(category=command)
+
+    for i in telegram_id_list:
+        pass
 
 
 #---#---#---#---#---#---#---#---#---
