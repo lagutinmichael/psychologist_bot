@@ -413,14 +413,12 @@ def admin_send_mailing(message):
         elif command == 'Статус':
             bot.send_message(message.from_user.id, 'Выберите статус пользователей, по которой отправите рассылку', reply_markup=ekaterina_buttons.admin_category())
             bot.register_next_step_handler(message, admin_send_mailing_status)
-            # добавить кнопку со
         elif command == 'Всем':
             bot.send_message(message.from_user.id, 'Введите текст сообщения для отправки всем пользователям', reply_markup=ekaterina_buttons.cancel())
             bot.register_next_step_handler(message, admin_send_meiling_everyone)
         elif command == 'Возраст':
             bot.send_message(message.from_user.id, 'Выберите возрастную категорию для отправки рассылки', reply_markup=ekaterina_buttons.admin_ages())
             bot.register_next_step_handler(message, admin_send_mailing_ages)
-            # добавить кнопки
         elif command == 'Назад':
             bot.send_message(message.from_user.id, 'Выберите действие', reply_markup=ekaterina_buttons.admin_main())
             bot.register_next_step_handler(message, admin_check_command)
@@ -438,15 +436,33 @@ def admin_send_mailing_category(message):
     if command in command_list:
         bot.send_message(message.from_user.id, 'Введите текст для расслыки', reply_markup=ekaterina_buttons.cancel())
         bot.register_next_step_handler(message, admin_send_mailing_category_action, command)
+    elif command == 'Отмена' or command == 'Назад':
+        bot.send_message(message.from_user.id, '')
     else:
         bot.send_message(message.from_user.id, 'Введена неизвестная команда, попробуйте снова', reply_markup=ekaterina_buttons.admin_mailng_main())
         bot.register_next_step_handler(message, admin_send_mailing)
 
 def admin_send_mailing_category_action(message, command):
     telegram_id_list = ekaterina_data.get_telegram_id_category(category=command)
-
+    text = message.text
     for i in telegram_id_list:
+        bot.send_message(int(i), text)
+        time.sleep(0.2)
+    bot.send_message(message.from_user.id, 'Рассылка отправлена успешно', reply_markup=ekaterina_buttons.admin_mailng_main())
+    bot.register_next_step_handler(message, admin_send_mailing)
+
+# ГЛАВНОЕ МЕНЮ - РАССЫЛККА - пожелания
+def admin_send_mailing_wishes(message):
+    command = message.text
+    command_list = ekaterina_data.get_list_wishes()
+
+    if command in command_list:
         pass
+    elif command == 'Отмена' or command == 'Назад':
+        pass
+    else:
+        pass
+    
 
 
 #---#---#---#---#---#---#---#---#---
@@ -486,4 +502,5 @@ def callback_inline(call):
 
     if call.data == 'answer_question_id':
         bot.send_message(call.from_user.id, 'Отправьте Telegram_id (он указан выше)')
+
 bot.polling(non_stop=True)
