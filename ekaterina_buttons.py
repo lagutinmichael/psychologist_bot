@@ -2,6 +2,43 @@ from telebot import types
 import ekaterina_data
 
 
+# USER основные кнопки
+def user_main():
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+
+    bt1 = types.KeyboardButton('Записаться на консультацию')
+    bt2 = types.KeyboardButton('Задать вопрос')
+    bt3 = types.KeyboardButton('Обо мне')
+    bt4 = types.KeyboardButton('Мои соц.сети')
+
+    kb.add(bt1, bt2, bt3, bt4)
+    
+    return kb
+
+# USER социальные сети
+def user_smm():
+    kb = types.InlineKeyboardMarkup(row_width=2)
+
+    bt1 = types.InlineKeyboardButton('Instagram', url='https://www.instagram.com/saburova_k_/')
+    bt2 = types.InlineKeyboardButton('Facebook', url='')
+    bt3 = types.InlineKeyboardButton('Telegram', url='https://t.me/Saburova_Katerina_psy')
+
+    kb.add(bt1, bt2, bt3)
+
+    return kb
+
+# USER да/нет
+def user_yes_no():
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+
+    bt1 = types.KeyboardButton('Да')
+    bt2 = types.KeyboardButton('Нет')
+    bt3 = types.KeyboardButton('Отмена')
+
+    kb.add(bt1, bt2, bt3)
+    
+    return kb
+
 # USER кнопка номера телефона
 def phone():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
@@ -253,10 +290,9 @@ def admin_mailng_main():
     bt3 = types.KeyboardButton('Статус')
     bt4 = types.KeyboardButton('Всем')
     bt5 = types.KeyboardButton('Назад')
-    bt6 = types.KeyboardButton('Возвраст')
 
     kb.add(bt4, bt3, bt1, bt2)
-    kb.row(bt6)
     kb.row(bt5)
 
     return kb
+
