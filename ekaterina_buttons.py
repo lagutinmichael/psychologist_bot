@@ -39,12 +39,14 @@ def user_yes_no():
     
     return kb
 
+
+
 # USER кнопка номера телефона
 def phone():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
     button_1 = types.KeyboardButton('Отправить контакт', request_contact=True)
-    button_2 = types.KeyboardButton('Назад')
+    button_2 = types.KeyboardButton('Отмена')
 
     kb.row(button_1)
     kb.row(button_2)
@@ -74,23 +76,14 @@ def admin_wishes():
     data = ekaterina_data.get_list_wishes()
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
 
-    list_buttons = [types.KeyboardButton(i) for i in data]
-   # for i in data:
-   #     kb.add(types.KeyboardButton(i))
-    kb.add(list_buttons)
+    #list_buttons = [types.KeyboardButton(i) for i in data]
+    #kb.add(list_buttons)
+    for i in data:
+        kb.add(types.KeyboardButton(i))
     kb.row(types.KeyboardButton('Отмена'))
     return kb
 
-# USER кнопки возрастов
-def ages():
-    data = ekaterina_data.get_list_age()
-
-    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-
-    for i in data:
-        kb.add(types.KeyboardButton(i))
-    return kb
-
+# ВОЗРАСТ
 def admin_ages():
     data = ekaterina_data.get_list_age()
 
@@ -111,17 +104,7 @@ def category():
     for i in data:
         kb.add(types.KeyboardButton(i))
 
-    return kb
-
-def admin_category():
-    data = ekaterina_data.get_list_category()
-
-    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=1)
-
-    for i in data:
-        kb.add(types.KeyboardButton(i))
-
-    kb.add(types.ReplyKeyboardMarkup('Отмена'))
+    kb.add(types.KeyboardButton('Отмена'))
     return kb
 
 # ADMIN кнопки со статусами 
@@ -133,7 +116,7 @@ def admin_category():
     for i in data:
         kb.add(types.KeyboardButton(i))
 
-    kb.add(types.ReplyKeyboardMarkup('Отмена'))
+    kb.add(types.KeyboardButton('Отмена'))
     return kb
 
 

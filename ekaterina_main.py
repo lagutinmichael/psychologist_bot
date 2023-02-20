@@ -3,7 +3,7 @@ from telebot import types
 
 import ekaterina_buttons
 import ekaterina_data
-from config import TOKEN
+from config import TOKEN, GROUP_ID
 
 import datetime
 import time
@@ -547,8 +547,12 @@ def user_check_command(message):
     command = message.text
     if message.text in command_list:
         if command == 'Записаться на консультацию':
-            bot.send_message(message.from_user.id, text_messages.TAKE_REQUEST_1, reply_markup=ekaterina_buttons.user_yes_no())
+            bot.send_message(message.from_user.id, text_messages.TAKE_REQUEST_1)
+            bot.send_message(message.from_user.id, text=text_messages.TAKE_REQUEST_1_1, reply_markup=ekaterina_buttons.user_yes_no())
             bot.register_next_step_handler(message, user_get_request)
+        elif command == 'Задать вопрос':
+            bot.send_message(message.from_user.id, text=text_messages.ASK_QUESTION)
+            bot.register_next_step_handler(message)
     else:
         bot.send_message(message.from_user.id, 'Введена неизвестная команда, попробуйте ещё раз', reply_markup=ekaterina_buttons.user_main())
         bot.register_next_step_handler(message, user_check_command)
@@ -558,9 +562,95 @@ def user_check_command(message):
 def user_get_request(message):
     if message.text == 'Отмена':
         bot.send_message(message.from_user.id, 'Выберите дейсвтие', reply_markup=ekaterina_buttons.user_main())
-        bot.register_next_step_handler(message, user_check_command())
+        bot.register_next_step_handler(message, user_check_command)
     
     # дописать функционал по приёму ответов Да/нет
+    else:
+        yes_no = message.text
+        bot.send_message(message.from_user.id, text_messages.TAKE_REQUEST_2, reply_markup=ekaterina_buttons.admin_ages())
+        bot.register_next_step_handler(message, user_get_request_age, yes_no)
+
+def user_get_request_age(message, yes_no):
+    if message.text =='Отмена':
+        bot.send_message(message.from_user.id, 'Регистрация на консультацию остановлена\n\nВыберите действие', reply_markup=ekaterina_buttons.user_main())
+        bot.register_next_step_handler(message, user_check_command)
+    else:
+        age = message.text
+        bot.send_message(message.from_user.id, text=text_messages.TAKE_REQUEST_3, reply_markup=ekaterina_buttons.category())
+        bot.register_next_step_handler(message, user_get_request_category, yes_no, age)
+
+def user_get_request_category(message, yes_no, age):
+    if message.text =='Отмена':
+        bot.send_message(message.from_user.id, 'Регистрация на консультацию остановлена\n\nВыберите действие', reply_markup=ekaterina_buttons.user_main())
+        bot.register_next_step_handler(message, user_check_command)
+    else:
+        category = message.text
+        bot.send_message(message.from_user.id, text=text_messages.TAKE_REQUEST_4, reply_markup=ekaterina_buttons.admin_wishes())
+        bot.register_next_step_handler(message, user_get_request_wishes, yes_no, age, category)
+
+def user_get_request_wishes(message, yes_no, age, category):
+    if message.text =='Отмена':
+        bot.send_message(message.from_user.id, 'Регистрация на консультацию остановлена\n\nВыберите действие', reply_markup=ekaterina_buttons.user_main())
+        bot.register_next_step_handler(message, user_check_command)
+    else:
+        wish = message.text
+        bot.send_message(message.from_user.id, text=text_messages.TAKE_REQUEST_5, reply_markup=types.ReplyKeyboardRemove())
+        bot.register_next_step_handler(message, user_get_request_comment, yes_no, age, category, wish)
+
+def user_get_request_comment(message, yes_no, age, category, wish):
+    comment = message.text
+    bot.send_message(message.from_user.id, text=text_messages.TAKE_REQUEST_6, reply_markup=ekaterina_buttons.phone())
+    bot.register_next_step_handler(message, user_get_request_phone, yes_no, age, category, wish, comment)
+
+def user_get_request_phone(message, yes_no, age, category, wish, comment):
+    if message.text:
+
+        text = message.text
+        if text == 'Отмена':
+            bot.send_message(message.from_user.id, 'Действие отменено', reply_markup=ekaterina_buttons.user_main())
+            bot.register_next_step_handler(message, user_check_command)
+        elif "+" in text:
+            text_1 = text.split('+')
+            phone_number = text_1[1:]
+            bot.send_message(message.from_user.id, text_messages.TAKE_REQUEST_7, reply_markup=types.ReplyKeyboardRemove())
+            bot.register_next_step_handler(message, user_get_request_name,yes_no, age, category, wish, comment, phone_number)
+        else:
+            phone_number = text
+            bot.send_message(message.from_user.id, text_messages.TAKE_REQUEST_7, reply_markup=types.ReplyKeyboardRemove())
+            bot.register_next_step_handler(message, user_get_request_name, yes_no, age, category, wish, comment, phone_number)
+
+    elif message.contact.phone_number:
+        phone_number =  message.contact.phone_number
+        #print(message)
+        bot.send_message(message.from_user.id, text_messages.TAKE_REQUEST_7, reply_markup=types.ReplyKeyboardRemove())
+        bot.register_next_step_handler(message, user_get_request_name,yes_no, age, category, wish, comment, phone_number)
+    else:
+        bot.send_message(message.from_user.id, 'Произошла ошибка в боте.\n\n\nДавайте попробуем еще раз', reply_markup=ekaterina_buttons.user_main())
+        bot.register_next_step_handler(message, user_check_command)
+
+def user_get_request_name(message, yes_no, age, category, wish, comment, phone_number ):
+    name = message.text
+    username = message.from_user.username
+
+    ekaterina_data.new_user_add(message.from_user.id, name, username, phone_number, category, wish, comment, yes_no, age)
+    id = len(ekaterina_data.get_quantity_requests()) + 1
+
+    bot.send_message(int(GROUP_ID),
+                    text = f'''<b>Новый запрос:</b>
+
+    <b>ID:</b> <i>{str(id)} </i>
+    <b>Имя:</b> <i>{name}</i> | @{username}
+    <b>Телефон:</b> {phone_number}
+    <b>Сфера:</b> <i>{category}</i>
+    <b>Пожелания:</b> <i>{wish}</i>
+    <b>Комментарий:</b> <i>{comment}</i>
+
+    <b>Telegram id:</b> '{message.from_user.id}'
+    ''',
+    parse_mode='html')
+
+    bot.send_message(message.from_user,id, text=text_messages.TAKE_REQUEST_8, reply_markup=ekaterina_buttons.user_main())
+    bot.register_next_step_handler(message, user_check_command)
 
 
 

@@ -28,29 +28,57 @@ question_list = table.worksheet('questions')
 other_list = table.worksheet('other')
 
 ## ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ
-def new_user_add(telegram_id, name, username, number, category, wishes, comments):
+def new_user_add(telegram_id, name, username, number, category, wishes, comments, yes_no, age):
     id = '1_' + f'{len(main_list.col_values(1))}' #вычисляем новый id по колличеству уже имеющихся
     lower_name = name.lower()
     tz_tashkent = pytz.timezone("Asia/Tashkent")
     dt_tashkent =str(datetime.datetime.now(tz_tashkent))
-    list_values = [id, telegram_id, lower_name, username, number, category, wishes, comments, '', dt_tashkent]
+    list_values = [id, telegram_id, lower_name, username, age, number, category, wishes, comments, yes_no,'', dt_tashkent]
 
     main_list.append_row(list_values)
+
+# СООБЩЕНИЕ в группу при добавлении нового пользователя
+def new_user_add_message(username):
+    data = main_list.row_values(int(id)+1) # получение значений строки по id
+
+    id = data[0][2:]
+    name = data[2]
+    username = data[3]
+    phone = data[4]
+    category = data[5]
+    wishes = data[6]
+    comment = data[7]
+    status = data[8]
+    telegram_id = data[1]
+    message = f'''  <b>Информация по поиску | ID № {id}:
+    ID:</b> {id}
+    <b>Имя:</b> <i>{name}</i> | @{username}
+    <b>Телефон:</b> {phone}
+    <b>Сфера:</b> <i>{category}</i>
+    <b>Пожелания:</b> <i>{wishes}</i>
+    <b>Комментарий:</b> <i>{comment}</i>
+    <b>Статус:</b> <i>{status}</i>
+
+    <b>Telegram id:</b> '{telegram_id}'
+'''
+    line = [message, telegram_id]
+    return line
+
 
 ## СМЕНА СТАТУСА
 # смена статуса по ID
 def new_status_id(id: str, status: str):
-    main_list.update_cell(int(id)+1, 9, status)
+    main_list.update_cell(int(id)+1, 11, status)
 
 # смена статуса по имени
 def new_status_name(name:str, status: str):
     cell = main_list.find(name, in_column=3) #получаем значение ячейки с поиском по имени
-    main_list.update_cell(cell.row, 9, status)
+    main_list.update_cell(cell.row, 11, status)
 
 # смена статуса по username
 def new_status_username(username, status):
     cell = main_list.find(username, in_column=4) #получаем значение ячейки с поиском по username
-    main_list.update_cell(cell.row, 9, status)
+    main_list.update_cell(cell.row, 11, status)
 
 
 ## РАССЫЛКИ
@@ -68,7 +96,7 @@ def get_telegram_id_category(category: str) -> list:
     list_id = [] # создаём финальный список для всех id
     for i in data: # запускаем цикл по всем значениям столбца с telegram_id
         index += 1 # получаем новую строку для проверки
-        check_category = main_list.cell(index, 6).value # получаем категорию по номеру строки
+        check_category = main_list.cell(index, 7).value # получаем категорию по номеру строки
 
         if check_category == category: # проверяем полученную категорию с искомой
             list_id.append(i) # если совпадает - добавляем telegram_id в финальный спиоск
@@ -82,7 +110,7 @@ def get_telegram_id_status(status: str) -> list:
     list_id = [] # создаём финальный список для всех id
     for i in data: # запускаем цикл по всем значениям столбца с telegram_id
         index += 1 # получаем новую строку для проверки
-        check_status = main_list.cell(index, 9).value # получаем статус по номеру строки
+        check_status = main_list.cell(index, 11).value # получаем статус по номеру строки
 
         if check_status == status: # проверяем полученный статус с искомым
             list_id.append(i) # если совпадает - добавляем telegram_id в финальный спиоск
@@ -96,7 +124,7 @@ def get_telegram_id_wish(status: str) -> list:
     list_id = [] # создаём финальный список для всех id
     for i in data: # запускаем цикл по всем значениям столбца с telegram_id
         index += 1 # получаем новую строку для проверки
-        check_status = main_list.cell(index, 7).value # получаем статус по номеру строки
+        check_status = main_list.cell(index, 8).value # получаем статус по номеру строки
 
         if check_status == status: # проверяем полученнон желание  с искомым
             list_id.append(i) # если совпадает - добавляем telegram_id в финальный спиоск
@@ -121,7 +149,7 @@ def get_telegram_id_id(id: str):
 
 # получение одного telegram_id по username
 def get_telegram_id_username(username: str):
-    cell = main_list.find(username)
+    cell = main_list.find(username, in_column=4)
     telegram_id = main_list.cell(cell.row, 2).value
 
     return telegram_id
@@ -194,15 +222,19 @@ def get_request_id(id:str) -> list:
     id = data[0][2:]
     name = data[2]
     username = data[3]
-    phone = data[4]
-    category = data[5]
-    wishes = data[6]
-    comment = data[7]
-    status = data[8]
+    age = data[4]
+    yes_no= data[9]
+    phone = data[5]
+    category = data[6]
+    wishes = data[7]
+    comment = data[8]
+    status = data[10]
     telegram_id = data[1]
     message = f'''  <b>Информация по поиску | ID № {id}:
     ID:</b> {id}
     <b>Имя:</b> <i>{name}</i> | @{username}
+    <b>Опыт с психологом: {yes_no}</b>
+    <b>Возарст: {age}</b>
     <b>Телефон:</b> {phone}
     <b>Сфера:</b> <i>{category}</i>
     <b>Пожелания:</b> <i>{wishes}</i>
@@ -216,33 +248,37 @@ def get_request_id(id:str) -> list:
 
 # получение запросов по статусу
 def get_request_status(status: str) -> list:
-    data = main_list.col_values(9) # получение всех статусов
+    data = main_list.col_values(11) # получение всех статусов
     data = data[1:] # убираем название заголовка
     index = 0 # счетчик для строк
     array = [] # пустой список для финальных сообщений
     for i in data:
         index += 1 # первая и последующие строки
         if i == status: # провекра условия
-            value = main_list.row_values(index) # получение значений по строке
-            id = value[0]
-            name = value[2]
-            username = value[3]
-            phone = value[4]
-            category = value[5]
-            wishes = value[6]
-            comment = value[7]
-            telegram_id = value[1]
-
-            message = f'''<b>Информация по поиску | Статус: {status}:</b>
-            <b>ID:</b> <i>{id} </i>
+            data = main_list.row_values(index) # получение значений по строке
+            id = data[0][2:]
+            name = data[2]
+            username = data[3]
+            age = data[4]
+            yes_no= data[9]
+            phone = data[5]
+            category = data[6]
+            wishes = data[7]
+            comment = data[8]
+            status = data[10]
+            telegram_id = data[1]
+            message = f'''  <b>Информация по поиску | ID № {id}:
+            ID:</b> {id}
             <b>Имя:</b> <i>{name}</i> | @{username}
+            <b>Опыт с психологом: {yes_no}</b>
+            <b>Возарст: {age}</b>
             <b>Телефон:</b> {phone}
             <b>Сфера:</b> <i>{category}</i>
             <b>Пожелания:</b> <i>{wishes}</i>
             <b>Комментарий:</b> <i>{comment}</i>
             <b>Статус:</b> <i>{status}</i>
-            
-            <b>Telegram_id: {telegram_id}<br><br>
+
+            <b>Telegram id:</b> '{telegram_id}'
             '''
 
             array.append(message)
@@ -251,29 +287,37 @@ def get_request_status(status: str) -> list:
 
 # получение запросов по категории
 def get_request_category(category: str) -> list:
-    data = main_list.col_values(6)
+    data = main_list.col_values(7)
     data = data[1:]
     index = 0
     array = []
     for i in data:
         index += 1
         if i == category:
-            value = main_list.row_values(index)
-            id = value[0][2:]
-            name = value[2]
-            username = value[3]
-            phone = value[4]
-            wishes = value[6]
-            comment = value[7]
-            status = value[8]
-            message = f'''*Информация по поиску | Сфера: {category}:
-            <b>ID:</b> <i>{id} </i>
-            </b>Имя:</b> <i>{name}</i> | @{username}
+            data = main_list.row_values(index)
+            id = data[0][2:]
+            name = data[2]
+            username = data[3]
+            age = data[4]
+            yes_no= data[9]
+            phone = data[5]
+            category = data[6]
+            wishes = data[7]
+            comment = data[8]
+            status = data[10]
+            telegram_id = data[1]
+            message = f'''  <b>Информация по поиску | ID № {id}:
+            ID:</b> {id}
+            <b>Имя:</b> <i>{name}</i> | @{username}
+            <b>Опыт с психологом: {yes_no}</b>
+            <b>Возарст: {age}</b>
             <b>Телефон:</b> {phone}
             <b>Сфера:</b> <i>{category}</i>
             <b>Пожелания:</b> <i>{wishes}</i>
             <b>Комментарий:</b> <i>{comment}</i>
             <b>Статус:</b> <i>{status}</i>
+
+            <b>Telegram id:</b> '{telegram_id}'
             '''
             array.append(message)
 
@@ -306,7 +350,7 @@ def new_question(telegram_id: str, name: str, username: str, question: str):
 
     list_value = [id, telegram_id, lower_name, username, question, dt_tashkent]
 
-    main_list.append_row(list_value)
+    question_list.append_row(list_value)
 
 
 # получить вопрос по id
