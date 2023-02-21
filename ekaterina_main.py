@@ -649,7 +649,7 @@ def user_get_request_name(message, yes_no, age, category, wish, comment, phone_n
     ''',
     parse_mode='html')
 
-    bot.send_message(message.from_user,id, text=text_messages.TAKE_REQUEST_8, reply_markup=ekaterina_buttons.user_main())
+    bot.send_message(message.from_user.id, text=text_messages.TAKE_REQUEST_8, reply_markup=ekaterina_buttons.user_main())
     bot.register_next_step_handler(message, user_check_command)
 
 
