@@ -552,7 +552,7 @@ def user_check_command(message):
             bot.register_next_step_handler(message, user_get_request)
         elif command == 'Задать вопрос':
             bot.send_message(message.from_user.id, text=text_messages.ASK_QUESTION)
-            bot.register_next_step_handler(message)
+            bot.register_next_step_handler(message, user_get_question)
     else:
         bot.send_message(message.from_user.id, 'Введена неизвестная команда, попробуйте ещё раз', reply_markup=ekaterina_buttons.user_main())
         bot.register_next_step_handler(message, user_check_command)
@@ -651,6 +651,32 @@ def user_get_request_name(message, yes_no, age, category, wish, comment, phone_n
 
     bot.send_message(message.from_user.id, text=text_messages.TAKE_REQUEST_8, reply_markup=ekaterina_buttons.user_main())
     bot.register_next_step_handler(message, user_check_command)
+
+# ГЛАВНОЕ МЕНЮ - получение вопроса
+def user_get_question(message):
+    bot.send_message(message.from_user.id, text_messages.ASK_QUESTION)
+    bot.register_next_step_handler(message, user_get_question_body)
+
+def user_get_question_body(message):
+    text_question = message.text
+
+    bot.send_message(message.from_user.id, text='Введите ваше имя')
+    bot.register_next_step_handler(message, user_get_question_name, text_question)
+
+def user_get_question_name(message, text_question):
+    name = message.text
+
+    if message.from_user.username:
+        ekaterina_data.new_question(message.from_user.id, name, message.from_user.username, text_question)
+        bot.send_message(int(GROUP_ID), ekaterina_data.get_question_new_message()[0])
+        bot.send_message(message.from_user.id, 'Ваш вопрос успешно отправлен\n\nВыберите следующее действие', reply_markup=ekaterina_buttons.user_main())
+        bot.register_next_step_handler(message, user_check_command)
+    else:
+        bot.send_message(message.from_user.id, 'Введите способо связи или контактные данные', reply_markup=ekaterina_buttons.phone())
+        bot.register_next_step_handler(message, user_get_question_contact, name, text_question)
+
+def user_get_question_contact(message, name, text_question):
+    pass
 
 
 

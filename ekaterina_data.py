@@ -352,6 +352,15 @@ def new_question(telegram_id: str, name: str, username: str, question: str):
 
     question_list.append_row(list_value)
 
+# получить вопрос по id
+def get_question_new_message(id: str) ->list:
+    data = question_list.row_values(int(id)+1)
+
+    message = f'Новый вопрос ID№{data[0]}:\n\nИмя: {data[2]} | @{data[3]}\n\nВопрос:\n{data[4]}'
+    list_info = [message, data[1]]
+
+    return list_info
+
 
 # получить вопрос по id
 def get_question_id(id: str) ->list:
