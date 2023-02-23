@@ -98,7 +98,7 @@ def admin_requests_menu(message):
                             reply_markup=ekaterina_buttons.cancel()
                             )
             bot.register_next_step_handler(message, admin_request_name)
-        elif command == 'Получить запрос по username':
+        elif command == 'Получить запрос по username (без собачки)':
             bot.send_message(
                             message.from_user.id,
                             'Введите username для начала поиска',
@@ -134,7 +134,7 @@ def admin_requests_menu(message):
 def admin_request_name(message):
     name = message.text
     data = ekaterina_data.get_request_name(name)
-    bot.send_message(message.from_user.id, data[1], reply_markup=ekaterina_buttons.admin_send_message(), parse_mode='html')
+    bot.send_message(message.from_user.id, data[0], reply_markup=ekaterina_buttons.admin_send_message(), parse_mode='html')
     bot.register_next_step_handler(message, admin_request_name_action, data)
 
 def admin_request_name_action(message, data):
@@ -551,8 +551,14 @@ def user_check_command(message):
             bot.send_message(message.from_user.id, text=text_messages.TAKE_REQUEST_1_1, reply_markup=ekaterina_buttons.user_yes_no())
             bot.register_next_step_handler(message, user_get_request)
         elif command == 'Задать вопрос':
-            bot.send_message(message.from_user.id, text=text_messages.ASK_QUESTION)
-            bot.register_next_step_handler(message, user_get_question)
+            bot.send_message(message.from_user.id, text=text_messages.ASK_QUESTION, reply_markup=ekaterina_buttons.cancel())
+            bot.register_next_step_handler(message, user_get_question_body)
+        elif command == 'Обо мне':
+            bot.send_message(message.from_user.id, text_messages.ABOUT_ME, reply_markup=ekaterina_buttons.user_main())
+            bot.register_next_step_handler(message, user_check_command)
+        elif command == 'Мои соц.сети':
+            bot.send_message(message.from_user.id, 'Мои социальные сети', reply_markup=ekaterina_buttons.user_smm())
+            bot.register_next_step_handler(message, user_check_command)
     else:
         bot.send_message(message.from_user.id, 'Введена неизвестная команда, попробуйте ещё раз', reply_markup=ekaterina_buttons.user_main())
         bot.register_next_step_handler(message, user_check_command)
@@ -653,31 +659,40 @@ def user_get_request_name(message, yes_no, age, category, wish, comment, phone_n
     bot.register_next_step_handler(message, user_check_command)
 
 # ГЛАВНОЕ МЕНЮ - получение вопроса
-def user_get_question(message):
-    bot.send_message(message.from_user.id, text_messages.ASK_QUESTION)
-    bot.register_next_step_handler(message, user_get_question_body)
+#def user_get_question(message):
+    
+  # bot.send_message(message.from_user.id, text_messages.ASK_QUESTION)
+  # bot.register_next_step_handler(message, user_get_question_body)
 
 def user_get_question_body(message):
-    text_question = message.text
+    if message.text == 'Отмена':
+        bot.send_message(message.from_user.id, 'Выберите действие', reply_markup=ekaterina_buttons.user_main())
+        bot.register_next_step_handler(message, user_check_command)
+    else:
+        text_question = message.text
 
-    bot.send_message(message.from_user.id, text='Введите ваше имя')
-    bot.register_next_step_handler(message, user_get_question_name, text_question)
+        bot.send_message(message.from_user.id, text='Введите ваше имя')
+        bot.register_next_step_handler(message, user_get_question_name, text_question)
 
 def user_get_question_name(message, text_question):
     name = message.text
 
     if message.from_user.username:
         ekaterina_data.new_question(message.from_user.id, name, message.from_user.username, text_question)
-        bot.send_message(int(GROUP_ID), ekaterina_data.get_question_new_message()[0])
+        bot.send_message(chat_id = int(GROUP_ID), text = ekaterina_data.get_question_new_message()[0])
         bot.send_message(message.from_user.id, 'Ваш вопрос успешно отправлен\n\nВыберите следующее действие', reply_markup=ekaterina_buttons.user_main())
         bot.register_next_step_handler(message, user_check_command)
     else:
-        bot.send_message(message.from_user.id, 'Введите способо связи или контактные данные', reply_markup=ekaterina_buttons.phone())
+        bot.send_message(message.from_user.id, 'Введите способо связи или контактные данные одним сообщением', reply_markup=ekaterina_buttons.phone())
         bot.register_next_step_handler(message, user_get_question_contact, name, text_question)
 
 def user_get_question_contact(message, name, text_question):
-    pass
+    contact = message.text
 
+    ekaterina_data.new_question(message.from_user.id, name, contact, text_question)
+    bot.send_message(int(GROUP_ID), ekaterina_data.get_question_new_message()[0])
+    bot.send_message(message.from_user.id, 'Ваш вопрос успешно отправлен\n\nВыберите следующее действие', reply_markup=ekaterina_buttons.user_main())
+    bot.register_next_step_handler(message, user_check_command)
 
 
 # ОБРАБОТЧИК КОМАНД inline клавиатур
@@ -715,3 +730,4 @@ def callback_inline(call):
         bot.send_message(call.from_user.id, 'Отправьте Telegram_id (он указан выше)')
 
 bot.polling(non_stop=True)
+

@@ -353,10 +353,11 @@ def new_question(telegram_id: str, name: str, username: str, question: str):
     question_list.append_row(list_value)
 
 # получить вопрос по id
-def get_question_new_message(id: str) ->list:
-    data = question_list.row_values(int(id)+1)
+def get_question_new_message() ->list:
+    id = len(question_list.col_values(col=1))
+    data = question_list.row_values(int(id))
 
-    message = f'Новый вопрос ID№{data[0]}:\n\nИмя: {data[2]} | @{data[3]}\n\nВопрос:\n{data[4]}'
+    message = f'Новый вопрос ID№ {data[0]}:\n\nИмя: {data[2]} | @{data[3]}\n\nВопрос:\n{data[4]}'
     list_info = [message, data[1]]
 
     return list_info
@@ -384,7 +385,7 @@ def get_question_name(name: str):
 
 # получить вопрос по username
 def get_question_username(username: str):
-    cell = question_list.find(username, in_column=3)
+    cell = question_list.find(username, in_column=4)
     data = question_list.row_values(cell.row)
 
     message = f'Поиск вопроса по username: {data[2]}:\n\nID: {data[0][2:]}\nИмя: {data[2]} | @{data[3]}\n\nВопрос:\n{data[4]}'

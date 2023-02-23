@@ -279,3 +279,13 @@ def admin_mailng_main():
 
     return kb
 
+# INLINE клавиатура с кнопками социальных сетей
+def user_smm():
+    kb = types.InlineKeyboardMarkup()
+
+    bt1 = types.InlineKeyboardButton('Instagram', url='https://www.instagram.com/saburova_k_/')
+    bt2 = types.InlineKeyboardButton('Facebook', url='https://www.instagram.com/saburova_k_/')
+
+    kb.add(bt1, bt2)
+
+    return kb
