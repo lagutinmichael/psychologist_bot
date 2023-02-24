@@ -200,7 +200,7 @@ def get_request_username(username: str) -> list:
     comment = data[7]
     status = data [8]
     telegram_id = data[1] #нужен, чтоб по этому запросу из БД можно было отправит сообщение напрямую пользователю
-    message = f'''  <b>Информация по поиску "{name}":</b>
+    message = f'''  <b>Информация по поиску "{username}":</b>
     <b>ID:</b> <i>{id} </i>
     <b>Имя:</b> <i>{name}</i> | @{username}
     <b>Телефон:</b> {phone}
@@ -255,18 +255,18 @@ def get_request_status(status: str) -> list:
     for i in data:
         index += 1 # первая и последующие строки
         if i == status: # провекра условия
-            data = main_list.row_values(index) # получение значений по строке
-            id = data[0][2:]
-            name = data[2]
-            username = data[3]
-            age = data[4]
-            yes_no= data[9]
-            phone = data[5]
-            category = data[6]
-            wishes = data[7]
-            comment = data[8]
-            status = data[10]
-            telegram_id = data[1]
+            info = main_list.row_values(index) # получение значений по строке
+            id = info[0][2:]
+            name = info[2]
+            username = info[3]
+            age = info[4]
+            yes_no= info[9]
+            phone = info[5]
+            category = info[6]
+            wishes = info[7]
+            comment = info[8]
+            status = info[10]
+            telegram_id = info[1]
             message = f'''  <b>Информация по поиску | ID № {id}:
             ID:</b> {id}
             <b>Имя:</b> <i>{name}</i> | @{username}
@@ -343,7 +343,7 @@ def get_statistic_request():
 
 # добавить новый вопрос
 def new_question(telegram_id: str, name: str, username: str, question: str):
-    id = '2_' + f'{len(main_list.col_values(1))}' #вычисляем новый id по колличеству уже имеющихся
+    id = '2_' + f'{len(question_list.col_values(1))}' #вычисляем новый id по колличеству уже имеющихся
     lower_name = name.lower()
     tz_tashkent = pytz.timezone("Asia/Tashkent")
     dt_tashkent =str(datetime.datetime.now(tz_tashkent))
@@ -357,7 +357,7 @@ def get_question_new_message() ->list:
     id = len(question_list.col_values(col=1))
     data = question_list.row_values(int(id))
 
-    message = f'Новый вопрос ID№ {data[0]}:\n\nИмя: {data[2]} | @{data[3]}\n\nВопрос:\n{data[4]}'
+    message = f'Новый вопрос ID№ {data[0]}:\n\nИмя: {data[2]} | @{data[3]}\n\nВопрос:\n{data[4]}\n\nTelegram_id = {data[1]}'
     list_info = [message, data[1]]
 
     return list_info
@@ -367,7 +367,7 @@ def get_question_new_message() ->list:
 def get_question_id(id: str) ->list:
     data = question_list.row_values(int(id)+1)
 
-    message = f'Поиск вопроса по ID№{data[0]}:\n\nИмя: {data[2]} | @{data[3]}\n\nВопрос:\n{data[4]}'
+    message = f'Поиск вопроса по ID№{data[0]}:\n\nИмя: {data[2]} | @{data[3]}\n\nВопрос:\n{data[4]} \n\nTelegram_id = {data[1]}'
     list_info = [message, data[1]]
 
     return list_info
@@ -435,7 +435,7 @@ def get_admin_list():
 # получить колличество запросов
 def get_quantity_requests():
     data = main_list.col_values(1)
-    data = data[1:]
+    data = len(data[1:])
 
     return data
 
